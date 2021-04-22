@@ -70,7 +70,6 @@ type command struct {
 	action commandAction
 }
 
-//id
 var commands = []command {{
 	triggers: []string{"prefix", "p"},
 	admin: true,
