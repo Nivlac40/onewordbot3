@@ -7,4 +7,5 @@ This bot uses [Arikawa](https://github.com/diamondburned/arikawa) to interact wi
 **Todo:**
 - Add a help command
 - Fix the sentence reset bug
-- Put documentation on Nivlac.net
+- Create oneword.nivlac.net
+- Put documentation on oneword.nivlac.net
