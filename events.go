@@ -25,7 +25,7 @@ func guildRemoveEvent(e *gateway.GuildDeleteEvent) {
 }
 
 func messageCreateEvent(e *gateway.MessageCreateEvent) {
-	if e.Author.Bot == true {
+	if e.Author.Bot == true || e.Message.Type != discord.DefaultMessage {
 		return
 	}
 	gs[e.GuildID].processMessageEvent(e)
