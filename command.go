@@ -177,4 +177,31 @@ var commands = []command {{
 		}
 		s.SendText(e.ChannelID, "Cleared deleted channels")
 	},
+}, {
+	triggers: []string{"config"},
+	admin:    true,
+	ascended: false,
+	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
+		if !g.channelRegistered(e.ChannelID) {
+			s.SendText(e.ChannelID, "This channel is not registered")
+			return
+		}
+
+		if len(c) == 1 {
+			s.SendText(e.ChannelID,"```json\n" + g.Channels[e.ChannelID].getJson() + "```")
+		} else if len(c) > 1 {
+			j := strings.Join(c[1:], " ")
+			j = strings.TrimPrefix(j , "```json")
+			j = strings.TrimPrefix(j , "```")
+			j = strings.TrimSuffix(j , "```")
+
+			err := g.Channels[e.ChannelID].writeJson(j)
+
+			if err != nil {
+				s.SendText(e.ChannelID, err.Error())
+			} else {
+				s.SendText(e.ChannelID, "Successfully Applied Config")
+			}
+		}
+	},
 }}
