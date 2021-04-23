@@ -140,28 +140,36 @@ var commands = []command {{
 	admin: true,
 	ascended: false,
 	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
+		if !g.channelRegistered(e.ChannelID) {
+			s.SendText(e.ChannelID, "Please use this in a registered channel")
+			return
+		}
+
 		if len(c) < 2 {
-			s.SendText(e.ChannelID, "Please provide a channel ID")
+			g.getChannel(e.ChannelID).OutputChannel = 0
+			s.SendText(e.ChannelID, "Output Cleared")
 			return
 		}
 
 		rawID, err := strconv.ParseUint(c[1], 10, 64)
 		if err != nil {
 			s.SendText(e.ChannelID, "Invalid Number")
+			return
 		}
 
 		id := discord.ChannelID(rawID)
 
 		if g.channelRegistered(id) {
-			if e.ChannelID == g.Channels[id].OutputChannel {
-				g.Channels[id].OutputChannel = 0
-				s.SendText(e.ChannelID, "Output Cleared")
-			} else {
-				g.Channels[id].OutputChannel = e.ChannelID
-				s.SendText(e.ChannelID, "Output Set")
-			}
+			s.SendText(e.ChannelID, "No")
+			return
+		}
+
+		if id == g.getChannel(e.ChannelID).OutputChannel {
+			g.getChannel(e.ChannelID).OutputChannel = 0
+			s.SendText(e.ChannelID, "Output Cleared")
 		} else {
-			s.SendText(e.ChannelID, "Invalid Channel")
+			g.getChannel(e.ChannelID).OutputChannel = id
+			s.SendText(e.ChannelID, "Output Set")
 		}
 	},
 }, {
