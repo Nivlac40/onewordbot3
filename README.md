@@ -8,3 +8,4 @@ This bot uses [Arikawa](https://github.com/diamondburned/arikawa) to interact wi
 - Add a help command
 - Fix the sentence reset bug
 - Add Logger
+- Add a help command
