@@ -133,7 +133,7 @@ var commands = []command {{
 			AFK: false,
 		})
 
-		s.SendText(e.ChannelID, "Status updated")
+		s.SendText(e.ChannelID, "Status Updated")
 	},
 }, {
 	triggers: []string{"output", "out"},
@@ -155,7 +155,7 @@ var commands = []command {{
 		if g.channelRegistered(id) {
 			if e.ChannelID == g.Channels[id].OutputChannel {
 				g.Channels[id].OutputChannel = 0
-				s.SendText(e.ChannelID, "Output Unset")
+				s.SendText(e.ChannelID, "Output Cleared")
 			} else {
 				g.Channels[id].OutputChannel = e.ChannelID
 				s.SendText(e.ChannelID, "Output Set")
@@ -202,6 +202,23 @@ var commands = []command {{
 			} else {
 				s.SendText(e.ChannelID, "Successfully Applied Config")
 			}
+		}
+	},
+}, {
+	triggers: []string{"setlog", "setlogchannel"},
+	admin: true,
+	ascended: false,
+	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
+		if g.LogChannel.IsNull() {
+			g.LogChannel = 0
+		}
+
+		if g.LogChannel == e.ChannelID {
+			g.LogChannel = 0
+			s.SendText(e.ChannelID, "Log channel cleared")
+		} else {
+			g.LogChannel = e.ChannelID
+			s.SendText(e.ChannelID, "Log channel set")
 		}
 	},
 }}
