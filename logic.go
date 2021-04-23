@@ -79,7 +79,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		valid:
 			c.store1 = append(c.store1, e.ID)
 		return
-		
+
 	} else if len(c.store1) != 0 {
 		if lock {
 			s.DeleteMessage(e.ChannelID, e.ID)
