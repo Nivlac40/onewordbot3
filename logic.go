@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 	"strconv"
@@ -234,4 +235,14 @@ func (g *guild) channelRegistered(id discord.ChannelID) bool {
 	} else {
 		return false
 	}
+}
+
+func (c *channel) getJson() string {
+	raw, err := json.MarshalIndent(c, "", "\t") ; Panic(err)
+	return string(raw)
+}
+
+func (c *channel) writeJson(j string) error {
+	err := json.Unmarshal([]byte(j), c)
+	return err
 }
