@@ -56,7 +56,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 	blisted := false
 
 	for _, word := range g.BlacklistedWords {
-		if word == e.Content {
+		if strings.ToLower(word) == strings.ToLower(e.Content) {
 			blisted = true
 			continue
 		}
