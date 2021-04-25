@@ -46,7 +46,7 @@ func fileExists(path string) bool {
 	return true
 }
 
-func writeGuildData(path string)  {
+func writeGuildData(path string) {
 	data, err := json.MarshalIndent(gs,"","\t") ; Panic(err)
 	err = ioutil.WriteFile(path, data, 0764) ; Panic(err)
 }

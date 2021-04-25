@@ -171,19 +171,19 @@ func (c *channel) isLegal(msg string) bool {
 }
 
 type channel struct {
-	channelID            discord.ChannelID
-	store1               []discord.MessageID
-	AllowIdentical       bool              `json:"allow_identical_words"`
-	AllowSameAuthor      bool              `json:"allow_same_author"`
- 	MinimumWords         int               `json:"minimum_words"`
-	MaximumWords         int               `json:"maximum_words"`
-	MinimumLength        int               `json:"minimum_length"`
-	MaximumLength        int               `json:"maximum_length"`
-	EndTrigger           string            `json:"end_trigger"`
-	DisallowedCharacters string            `json:"disallowed_characters"`
-	PinSentences         bool              `json:"pin_sentences"`
-	OutputChannel        discord.ChannelID `json:"output_channel"`
-	Prefix               string            `json:"prefix"`
+	channelID discord.ChannelID
+	store1 []discord.MessageID
+	AllowIdentical bool `json:"allow_identical_words"`
+	AllowSameAuthor bool `json:"allow_same_author"`
+ 	MinimumWords int `json:"minimum_words"`
+	MaximumWords int `json:"maximum_words"`
+	MinimumLength int `json:"minimum_length"`
+	MaximumLength int `json:"maximum_length"`
+	EndTrigger string `json:"end_trigger"`
+	DisallowedCharacters string `json:"disallowed_characters"`
+	PinSentences bool `json:"pin_sentences"`
+	OutputChannel discord.ChannelID `json:"output_channel"`
+	Prefix string `json:"prefix"`
 	DeleteMessages bool `json:"delete_messages"`
 	DisallowDeletion bool `json:"disallow_deletion"`
 	SentenceAsChannelTopic bool `json:"sentence_as_channel_topic"`
@@ -205,18 +205,18 @@ func (c *channel) getLastValidMessage() *discord.Message {
 func (g *guild) regChannel(id discord.ChannelID) {
 	if _, ok := g.Channels[id]; !ok {
 		g.Channels[id] = &channel{
-			channelID:            id,
-			AllowIdentical:       true,
-			AllowSameAuthor:      false,
-			MinimumWords:         1,
-			MaximumWords:         1,
-			MinimumLength:        1,
-			MaximumLength:        14,
-			EndTrigger:           ".",
+			channelID: id,
+			AllowIdentical: true,
+			AllowSameAuthor: false,
+			MinimumWords: 1,
+			MaximumWords: 1,
+			MinimumLength: 1,
+			MaximumLength: 14,
+			EndTrigger: ".",
 			DisallowedCharacters: ":<>@`\n/_",
-			PinSentences:         true,
-			OutputChannel:        0,
-			Prefix:               "",
+			PinSentences: true,
+			OutputChannel: 0,
+			Prefix: "",
 			DeleteMessages: false,
 			DisallowDeletion: false,
 			SentenceAsChannelTopic: true,

@@ -187,7 +187,7 @@ var commands = []command {{
 	},
 }, {
 	triggers: []string{"config"},
-	admin:    true,
+	admin: true,
 	ascended: false,
 	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
 		if !g.channelRegistered(e.ChannelID) {

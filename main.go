@@ -51,10 +51,10 @@ func main() {
 	err = s.Open() ; Panic(err)
 
 	s.Gateway.UpdateStatus(gateway.UpdateStatusData{
-		Since:      0,
+		Since:  0,
 		Activities: []discord.Activity{},
-		Status:     gateway.DoNotDisturbStatus,
-		AFK:        false,
+		Status:  gateway.DoNotDisturbStatus,
+		AFK:  false,
 	})
 
 	go autosaveLoop(botConfig.AutosaveSpeed, dataFile)
