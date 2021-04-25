@@ -229,4 +229,134 @@ var commands = []command {{
 			s.SendText(e.ChannelID, "Log channel set")
 		}
 	},
+}, {
+	triggers: []string{"blacklist", "ban"},
+	admin: true,
+	ascended: false,
+	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
+		for count, value := range c {
+			c[count] = strings.ToLower(value)
+		}
+
+		if len(c) < 3 {
+			goto badsyntax
+		}
+
+		switch c[2] {
+		case "add":
+		fallthrough
+		case "remove":
+			if len(c) < 4 {
+				goto badsyntax
+			}
+		case "list":
+		case "clear":
+		default:
+			goto badsyntax
+		}
+
+		if c[1] == "user" {
+			switch c[2] {
+			case "add":
+				var users []discord.UserID
+				for _, i := range c[3:] {
+					rawID, err := strconv.ParseUint(i, 10, 64)
+					if err != nil {
+						s.SendText(e.ChannelID, "Invalid Number")
+						return
+					}
+					users = append(users, discord.UserID(rawID))
+				}
+
+				for _, a := range users {
+					g.BlacklistedAccounts = append(g.BlacklistedAccounts, a)
+				}
+				s.SendText(e.ChannelID, "Blacklisted Users Added")
+			case "remove":
+				var users []discord.UserID
+				for _, i := range c[3:] {
+					rawID, err := strconv.ParseUint(i, 10, 64)
+					if err != nil {
+						s.SendText(e.ChannelID, "Invalid Number")
+						return
+					}
+					users = append(users, discord.UserID(rawID))
+				}
+
+
+				for _, a := range users {
+					for c, account := range g.BlacklistedAccounts {
+						if account == a {
+							g.BlacklistedAccounts = append(g.BlacklistedAccounts[:c], g.BlacklistedAccounts[c+1:]...)
+						}
+					}
+				}
+				s.SendText(e.ChannelID, "Blacklisted Users Removed")
+			case "list":
+				if len(g.BlacklistedAccounts) == 0 {
+					s.SendText(e.ChannelID, "No Blacklisted Users")
+				} else {
+					a := ""
+					for _, account := range g.BlacklistedAccounts {
+						a += account.Mention() + " (" + account.String() + ")\n"
+					}
+					s.SendEmbed(e.ChannelID, discord.Embed{
+						Title:       "Blacklisted Users",
+						Type:        "",
+						Description: a,
+						URL:         "",
+						Timestamp:   discord.Timestamp{},
+						Color:       0,
+						Footer:      nil,
+						Image:       nil,
+						Thumbnail:   nil,
+						Video:       nil,
+						Provider:    nil,
+						Author:      nil,
+						Fields:      nil,
+					})
+				}
+			case "clear":
+				g.BlacklistedAccounts = []discord.UserID{}
+				s.SendText(e.ChannelID, "Blacklisted Users Cleared")
+			default:
+				goto badsyntax
+			}
+		} else if c[1] == "word" {
+			switch c[2] {
+			case "add":
+				for _, a := range c[3:] {
+					g.BlacklistedWords = append(g.BlacklistedWords, a)
+				}
+				s.SendText(e.ChannelID, "Blacklisted Words Added")
+			case "remove":
+				for _, a := range c[3:] {
+					for c, word := range g.BlacklistedWords {
+						if word == a {
+							g.BlacklistedWords = append(g.BlacklistedWords[:c], g.BlacklistedWords[c+1:]...)
+						}
+					}
+				}
+				s.SendText(e.ChannelID, "Blacklisted Words Removed")
+			case "list":
+				if len(g.BlacklistedWords) == 0 {
+					s.SendText(e.ChannelID, "No Blacklisted Words")
+				} else {
+					s.SendText(e.ChannelID, strings.Join(g.BlacklistedWords, ", "))
+				}
+			case "clear":
+				g.BlacklistedWords = []string{}
+				s.SendText(e.ChannelID, "Blacklisted Words Cleared")
+			default:
+				goto badsyntax
+			}
+		} else {
+			goto badsyntax
+		}
+
+		return
+		badsyntax:
+		s.SendText(e.ChannelID, "blacklist <user/word> <add/remove/list/clear> <arguments...>")
+		return
+	},
 }}

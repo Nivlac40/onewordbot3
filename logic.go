@@ -15,7 +15,18 @@ type guild struct {
 	Channels map[discord.ChannelID]*channel `json:"channels"`
 	UpgradedUntil time.Duration `json:"upgraded_until"`
 	LogChannel discord.ChannelID `json:"log_channel"`
+	BlacklistedWords []string `json:"blacklisted_words"`
+	BlacklistedAccounts []discord.UserID `json:"blacklisted_accounts"`
+	BlacklistMode blmode `json:"blacklist_mode"`
 }
+
+type blmode int
+
+const (
+	blacklistDelete blmode = iota
+	blacklistIgnore
+	blacklistReact
+)
 
 var lock = false
 
@@ -43,6 +54,36 @@ func decodeCommand(inp, prefix string) []string {
 }
 
 func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
+	blisted := false
+
+	for _, word := range g.BlacklistedWords {
+		if word == e.Content {
+			blisted = true
+			continue
+		}
+	}
+
+	for _, account := range g.BlacklistedAccounts {
+		if account == e.Author.ID {
+			blisted = true
+			continue
+		}
+	}
+
+	if blisted {
+		if g.BlacklistMode == blacklistDelete {
+			s.DeleteMessage(e.ChannelID, e.ID)
+			return
+		} else if g.BlacklistMode == blacklistIgnore {
+			return
+		} else if g.BlacklistMode == blacklistReact {
+			s.React(e.ChannelID, e.ID, "❌")
+			return
+		} else {
+			panic("Illegal Blacklist Mode")
+		}
+	}
+
 	if e.Content != c.EndTrigger {
 		if (len(e.Attachments) != 0) || (len(e.Stickers) != 0) || (e.ReferencedMessage != nil) || (len(e.Embeds) != 0) {
 			s.DeleteMessage(e.ChannelID, e.ID)
