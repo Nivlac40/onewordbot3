@@ -14,7 +14,6 @@ type guild struct {
 	Prefix string `json:"prefix"`
 	Channels map[discord.ChannelID]*channel `json:"channels"`
 	UpgradedUntil time.Duration `json:"upgraded_until"`
-	LogChannel discord.ChannelID `json:"log_channel"`
 	BlacklistedWords []string `json:"blacklisted_words"`
 	BlacklistedAccounts []discord.UserID `json:"blacklisted_accounts"`
 	BlacklistMode blmode `json:"blacklist_mode"`
@@ -115,10 +114,11 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		}
 
 		invalid:
-			s.DeleteMessage(e.ChannelID, e.ID)
+		s.DeleteMessage(e.ChannelID, e.ID)
 		return
+
 		valid:
-			c.store1 = append(c.store1, e.ID)
+		c.store1 = append(c.store1, e.ID)
 		return
 
 	} else if len(c.store1) != 0 {

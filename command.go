@@ -213,23 +213,6 @@ var commands = []command {{
 		}
 	},
 }, {
-	triggers: []string{"setlog", "setlogchannel"},
-	admin: true,
-	ascended: false,
-	action: func(e *gateway.MessageCreateEvent, c []string, g *guild) {
-		if g.LogChannel.IsNull() {
-			g.LogChannel = 0
-		}
-
-		if g.LogChannel == e.ChannelID {
-			g.LogChannel = 0
-			s.SendText(e.ChannelID, "Log channel cleared")
-		} else {
-			g.LogChannel = e.ChannelID
-			s.SendText(e.ChannelID, "Log channel set")
-		}
-	},
-}, {
 	triggers: []string{"blacklist", "ban"},
 	admin: true,
 	ascended: false,
@@ -307,13 +290,6 @@ var commands = []command {{
 						URL:         "",
 						Timestamp:   discord.Timestamp{},
 						Color:       0,
-						Footer:      nil,
-						Image:       nil,
-						Thumbnail:   nil,
-						Video:       nil,
-						Provider:    nil,
-						Author:      nil,
-						Fields:      nil,
 					})
 				}
 			case "clear":
