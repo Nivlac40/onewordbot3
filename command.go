@@ -245,7 +245,7 @@ var commands = []command {{
 				for _, i := range c[3:] {
 					rawID, err := strconv.ParseUint(i, 10, 64)
 					if err != nil {
-						s.SendText(e.ChannelID, "Invalid Number")
+						s.SendText(e.ChannelID, "Invalid Number(s)")
 						return
 					}
 					users = append(users, discord.UserID(rawID))
@@ -254,7 +254,7 @@ var commands = []command {{
 				for _, a := range users {
 					g.BlacklistedAccounts = append(g.BlacklistedAccounts, a)
 				}
-				s.SendText(e.ChannelID, "Blacklisted Users Added")
+				s.SendText(e.ChannelID, "User(s) Added")
 			case "remove":
 				var users []discord.UserID
 				for _, i := range c[3:] {
@@ -274,7 +274,7 @@ var commands = []command {{
 						}
 					}
 				}
-				s.SendText(e.ChannelID, "Blacklisted Users Removed")
+				s.SendText(e.ChannelID, "User(s) Removed")
 			case "list":
 				if len(g.BlacklistedAccounts) == 0 {
 					s.SendText(e.ChannelID, "No Blacklisted Users")
@@ -284,7 +284,7 @@ var commands = []command {{
 						a += account.Mention() + " (" + account.String() + ")\n"
 					}
 					s.SendEmbed(e.ChannelID, discord.Embed{
-						Title:       "Blacklisted Users",
+						Title:       "Banned User(s)",
 						Type:        "",
 						Description: a,
 						URL:         "",
@@ -294,7 +294,7 @@ var commands = []command {{
 				}
 			case "clear":
 				g.BlacklistedAccounts = []discord.UserID{}
-				s.SendText(e.ChannelID, "Blacklisted Users Cleared")
+				s.SendText(e.ChannelID, "User(s) Cleared")
 			default:
 				goto badsyntax
 			}
@@ -304,7 +304,7 @@ var commands = []command {{
 				for _, a := range c[3:] {
 					g.BlacklistedWords = append(g.BlacklistedWords, a)
 				}
-				s.SendText(e.ChannelID, "Blacklisted Words Added")
+				s.SendText(e.ChannelID, "Word(s) Added")
 			case "remove":
 				for _, a := range c[3:] {
 					for c, word := range g.BlacklistedWords {
@@ -313,16 +313,16 @@ var commands = []command {{
 						}
 					}
 				}
-				s.SendText(e.ChannelID, "Blacklisted Words Removed")
+				s.SendText(e.ChannelID, "Word(s) Removed")
 			case "list":
 				if len(g.BlacklistedWords) == 0 {
-					s.SendText(e.ChannelID, "No Blacklisted Words")
+					s.SendText(e.ChannelID, "No Banned Words")
 				} else {
 					s.SendText(e.ChannelID, strings.Join(g.BlacklistedWords, ", "))
 				}
 			case "clear":
 				g.BlacklistedWords = []string{}
-				s.SendText(e.ChannelID, "Blacklisted Words Cleared")
+				s.SendText(e.ChannelID, "Word(s) Cleared")
 			default:
 				goto badsyntax
 			}
@@ -332,7 +332,7 @@ var commands = []command {{
 
 		return
 		badsyntax:
-		s.SendText(e.ChannelID, "blacklist <user/word> <add/remove/list/clear> <arguments...>")
+		s.SendText(e.ChannelID, "ban <user/word> <add/remove/list/clear> <arguments...>")
 		return
 	},
 }}
