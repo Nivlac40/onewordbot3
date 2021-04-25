@@ -183,12 +183,6 @@ type channel struct {
 	DisallowedCharacters string `json:"disallowed_characters"`
 	PinSentences bool `json:"pin_sentences"`
 	OutputChannel discord.ChannelID `json:"output_channel"`
-	Prefix string `json:"prefix"`
-	DeleteMessages bool `json:"delete_messages"`
-	DisallowDeletion bool `json:"disallow_deletion"`
-	SentenceAsChannelTopic bool `json:"sentence_as_channel_topic"`
-	Exclusive bool `json:"exclusive"`
-	SFW bool `json:"sfw"`
 	Separator string `json:"separator"`
 }
 
@@ -216,12 +210,6 @@ func (g *guild) regChannel(id discord.ChannelID) {
 			DisallowedCharacters: ":<>@`\n/_",
 			PinSentences: true,
 			OutputChannel: 0,
-			Prefix: "",
-			DeleteMessages: false,
-			DisallowDeletion: false,
-			SentenceAsChannelTopic: true,
-			Exclusive: true,
-			SFW: false,
 			Separator: " ",
 		}
 	}
