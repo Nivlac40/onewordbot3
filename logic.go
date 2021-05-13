@@ -24,7 +24,6 @@ type blmode int
 const (
 	blacklistDelete blmode = iota
 	blacklistIgnore
-	blacklistReact
 )
 
 var lock = false
@@ -56,7 +55,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 	blisted := false
 
 	for _, word := range g.BlacklistedWords {
-		if strings.ToLower(word) == strings.ToLower(e.Content) {
+		if strings.Contains(strings.ToLower(e.Content), strings.ToLower(word)) {
 			blisted = true
 			continue
 		}
@@ -74,9 +73,6 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 			s.DeleteMessage(e.ChannelID, e.ID)
 			return
 		} else if g.BlacklistMode == blacklistIgnore {
-			return
-		} else if g.BlacklistMode == blacklistReact {
-			s.React(e.ChannelID, e.ID, "❌")
 			return
 		} else {
 			panic("Illegal Blacklist Mode")
