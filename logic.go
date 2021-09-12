@@ -60,7 +60,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		}
 
 		if lastmsg == nil {
-			if c.isLegal(e.Content) {
+			if c.isLegal(e.Content, g.BlacklistedWords) {
 				goto valid
 			} else {
 				goto invalid
@@ -74,7 +74,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 				goto invalid
 			}
 
-			if c.isLegal(e.Content) {
+			if c.isLegal(e.Content, g.BlacklistedWords) {
 				goto valid
 			} else {
 				goto invalid
@@ -98,7 +98,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		str1 := ""
 		for _, ID := range c.store1 {
 			msg, err := s.Message(e.ChannelID, ID)
-			if err == nil && c.isLegal(msg.Content) {
+			if err == nil && c.isLegal(msg.Content, g.BlacklistedWords) {
 				str1 += c.Separator + msg.Content
 			}
 		}
@@ -154,14 +154,14 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 }
 
 func (c *channel) processEditEvent(e *gateway.MessageUpdateEvent) {
-	if !c.isLegal(e.Content) {
+	if !c.isLegal(e.Content, gs[e.GuildID].BlacklistedWords) {
 		s.React(e.ChannelID, e.ID, "❌")
 	} else {
 		s.Unreact(e.ChannelID, e.ID, "❌")
 	}
 }
 
-func (c *channel) isLegal(msg string) bool {
+func (c *channel) isLegal(msg string, bl []string) bool {
 	wordcount := len(strings.Split(msg, " "))
 
 	if (wordcount < c.MinimumWords) || (wordcount > c.MaximumWords) {
@@ -178,7 +178,7 @@ func (c *channel) isLegal(msg string) bool {
 
 	fmt.Println(c.guildID)
 
-	for _, word := range gs[c.guildID].BlacklistedWords {
+	for _, word := range bl {
 		if strings.Contains(strings.ToLower(msg), strings.ToLower(word)) {
 			return false
 		}
