@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 	"strconv"
@@ -16,15 +17,7 @@ type guild struct {
 	UpgradedUntil time.Duration `json:"upgraded_until"`
 	BlacklistedWords []string `json:"blacklisted_words"`
 	BlacklistedAccounts []discord.UserID `json:"blacklisted_accounts"`
-	BlacklistMode blmode `json:"blacklist_mode"`
 }
-
-type blmode int
-
-const (
-	blacklistDelete blmode = iota
-	blacklistIgnore
-)
 
 var lock = false
 
@@ -41,7 +34,7 @@ func (g *guild) processMessageEvent(e *gateway.MessageCreateEvent) {
 	}
 
 	if strings.Contains(e.Content, strconv.FormatUint(uint64(me.ID), 10)) {
-		s.SendText(e.ChannelID, "It seems my prefix here is " + g.Prefix)
+		s.SendText(e.ChannelID, "My prefix here is " + g.Prefix)
 		return
 	}
 }
@@ -52,33 +45,6 @@ func decodeCommand(inp, prefix string) []string {
 }
 
 func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
-	blisted := false
-
-	for _, word := range g.BlacklistedWords {
-		if strings.Contains(strings.ToLower(e.Content), strings.ToLower(word)) {
-			blisted = true
-			continue
-		}
-	}
-
-	for _, account := range g.BlacklistedAccounts {
-		if account == e.Author.ID {
-			blisted = true
-			continue
-		}
-	}
-
-	if blisted {
-		if g.BlacklistMode == blacklistDelete {
-			s.DeleteMessage(e.ChannelID, e.ID)
-			return
-		} else if g.BlacklistMode == blacklistIgnore {
-			return
-		} else {
-			panic("Illegal Blacklist Mode")
-		}
-	}
-
 	if e.Content != c.EndTrigger {
 		if (len(e.Attachments) != 0) || (len(e.Stickers) != 0) || (e.ReferencedMessage != nil) || (len(e.Embeds) != 0) {
 			s.DeleteMessage(e.ChannelID, e.ID)
@@ -86,6 +52,12 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		}
 
 		lastmsg := c.getLastValidMessage()
+
+		for _, account := range g.BlacklistedAccounts {
+			if account == e.Author.ID {
+				goto invalid
+			}
+		}
 
 		if lastmsg == nil {
 			if c.isLegal(e.Content) {
@@ -204,10 +176,20 @@ func (c *channel) isLegal(msg string) bool {
 		return false
 	}
 
+	fmt.Println(c.guildID)
+
+	for _, word := range gs[c.guildID].BlacklistedWords {
+		if strings.Contains(strings.ToLower(msg), strings.ToLower(word)) {
+			return false
+		}
+	}
+
+
 	return true
 }
 
 type channel struct {
+	guildID discord.GuildID
 	channelID discord.ChannelID
 	store1 []discord.MessageID
 	AllowIdentical bool `json:"allow_identical_words"`

@@ -10,6 +10,7 @@ func guildCreateEvent(e *gateway.GuildCreateEvent) {
 		gs[e.Guild.ID].guildID = e.Guild.ID
 		for id, c := range gs[e.Guild.ID].Channels {
 			c.channelID = id
+			c.guildID = e.Guild.ID
 		}
 	} else {
 		gs[e.Guild.ID] = &guild{
