@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 	"strconv"
@@ -175,8 +174,6 @@ func (c *channel) isLegal(msg string, bl []string) bool {
 	if strings.ContainsAny(msg, c.DisallowedCharacters) {
 		return false
 	}
-
-	fmt.Println(c.guildID)
 
 	for _, word := range bl {
 		if strings.Contains(strings.ToLower(msg), strings.ToLower(word)) {
