@@ -70,6 +70,6 @@ func main() {
 		gs = gt
 	}
 
-	err = s.CloseGracefully() ; Panic(err)
+	err = s.Close() ; Panic(err)
 	writeGuildData(dataFile)
 }
