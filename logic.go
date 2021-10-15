@@ -118,11 +118,7 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 				URL: "",
 				Timestamp: discord.Timestamp{},
 				Color: 0x990000,
-				Footer: &discord.EmbedFooter{
-					Text: "Sentence Ended By " + ident + " (" + e.Author.ID.String() + ")",
-					Icon: "",
-					ProxyIcon: "",
-				},
+				Footer: nil,
 				Image: nil,
 				Thumbnail: nil,
 				Video: nil,
