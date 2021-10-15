@@ -103,13 +103,6 @@ func (c *channel) processMessage(e *gateway.MessageCreateEvent, g *guild) {
 		}
 		msg, err := s.SendText(e.ChannelID, str1)
 
-		ident := ""
-		if e.Member.Nick != "" {
-			ident = e.Member.Nick
-		} else {
-			ident = e.Author.Username
-		}
-
 		if len(str1) != 0 && c.OutputChannel != 0 && !c.OutputChannel.IsNull() {
 			s.SendEmbed(c.OutputChannel, discord.Embed{
 				Title: "",
