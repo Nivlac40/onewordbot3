@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -32,7 +31,7 @@ func (g *guild) processMessageEvent(e *gateway.MessageCreateEvent) {
 		g.Channels[e.ChannelID].processMessage(e, g)
 	}
 
-	if strings.Contains(e.Content, strconv.FormatUint(uint64(me.ID), 10)) {
+	if e.Content == me.Mention() {
 		s.SendText(e.ChannelID, "My prefix here is " + g.Prefix)
 		return
 	}
