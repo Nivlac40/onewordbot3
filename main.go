@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	s *state.State
+	s         *state.State
 	botConfig botConfigStruct
-	gs = make(map[discord.GuildID]*guild)
-	me *discord.User
+	gs        = make(map[discord.GuildID]*guild)
+	me        *discord.User
 )
 
 func main() {
@@ -36,7 +36,8 @@ func main() {
 	}
 
 	var err error
-	s, err = state.NewWithIntents("Bot " + botConfig.Token, gateway.IntentGuildMessages, gateway.IntentGuilds) ; Panic(err)
+	s, err = state.NewWithIntents("Bot "+botConfig.Token, gateway.IntentGuildMessages, gateway.IntentGuilds)
+	Panic(err)
 
 	s.AddHandler(messageCreateEvent)
 	s.AddHandler(messageEditEvent)
@@ -46,15 +47,17 @@ func main() {
 
 	s.Gateway.Identifier.Properties.Browser = "Discord Android"
 
-	me, err = s.Me() ; Panic(err)
+	me, err = s.Me()
+	Panic(err)
 
-	err = s.Open() ; Panic(err)
+	err = s.Open()
+	Panic(err)
 
 	s.Gateway.UpdateStatus(gateway.UpdateStatusData{
-		Since:  0,
+		Since:      0,
 		Activities: []discord.Activity{},
-		Status:  gateway.DoNotDisturbStatus,
-		AFK:  false,
+		Status:     gateway.DoNotDisturbStatus,
+		AFK:        false,
 	})
 
 	go autosaveLoop(botConfig.AutosaveSpeed, dataFile)
@@ -70,6 +73,7 @@ func main() {
 		gs = gt
 	}
 
-	err = s.CloseGracefully() ; Panic(err)
+	err = s.CloseGracefully()
+	Panic(err)
 	writeGuildData(dataFile)
 }
