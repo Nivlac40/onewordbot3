@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
@@ -36,8 +37,7 @@ func main() {
 	}
 
 	var err error
-	s, err = state.NewWithIntents("Bot "+botConfig.Token, gateway.IntentGuildMessages, gateway.IntentGuilds)
-	Panic(err)
+	s = state.NewWithIntents("Bot "+botConfig.Token, gateway.IntentGuildMessages|gateway.IntentGuilds)
 
 	s.AddHandler(messageCreateEvent)
 	s.AddHandler(messageEditEvent)
@@ -45,20 +45,11 @@ func main() {
 	s.AddHandler(guildRemoveEvent)
 	s.AddHandler(channelDeleteEvent)
 
-	s.Gateway.Identifier.Properties.Browser = "Discord Android"
+	err = s.Open(context.Background())
+	Panic(err)
 
 	me, err = s.Me()
 	Panic(err)
-
-	err = s.Open()
-	Panic(err)
-
-	s.Gateway.UpdateStatus(gateway.UpdateStatusData{
-		Since:      0,
-		Activities: []discord.Activity{},
-		Status:     gateway.DoNotDisturbStatus,
-		AFK:        false,
-	})
 
 	go autosaveLoop(botConfig.AutosaveSpeed, dataFile)
 
@@ -73,7 +64,7 @@ func main() {
 		gs = gt
 	}
 
-	err = s.CloseGracefully()
+	err = s.Close()
 	Panic(err)
 	writeGuildData(dataFile)
 }
